@@ -20,7 +20,7 @@
     + 如果信号的参数比它所连接的槽的参数多，那么多余的参数将会被简单地忽略掉
 
 #### 自动建立信号槽连接
-> 官方文档介绍：[Automatic Connections](https://doc.qt.io/qt-6/designer-using-a-ui-file.html#automatic-connections)
+> 官方文档介绍：[Automatic Connections](https://doc.qt.io/archives/qt-4.8/designer-using-a-ui-file.html#automatic-connections)
 
 QWidget窗体类内，可以通过`void on_<object name>_<signal name>(<signal parameters>);`格式自定义槽函数，自动建立信号-槽连接到该槽函数，它等同于我们主动通过如下方式建立信号-槽连接：  
 `QObject::connect(<object name>, SIGNAL(signal name), this, on_<object name>__<signal_name>)`
@@ -36,6 +36,9 @@ QWidget窗体类内，可以通过`void on_<object name>_<signal name>(<signal p
 #### 以`Ui_`开头的工具类
 + 类内公有（public）成员包含了前面设计时添加的所有组件和布局，外部可以自由使用。
 + `setupUi`方法对窗体进行初始化，其内就是之前设计ui时做的动作相对应的代码逻辑，就像本章的`find`对话框构造函数内，我们主动做的事情一样，`setupUi`方法自动帮我们做好了这些事情。
+  + 设置控件，布局，tab顺序等
+  + 建立窗体内控件之间的信号-槽连接
+  + 通过`QMetaObject::connectSlotsByName(this);`建立控件信号与窗体的槽函数连接
 + `retranslateUi`即将用到的文本翻译成其它语言（暂时还为学习到这部分）
 
 #### UI类嵌入方式
@@ -45,7 +48,7 @@ QWidget窗体类内，可以通过`void on_<object name>_<signal name>(<signal p
 + 集成
 + 多重继承
 
-Qt Creator默认使用的是第一种方式，书籍内使用的是第三种方式。实际上还有第四种方式，在`gotocell1`项目中的main函数内，我们在外部直接使用相应的UI类。这四种方式在Qt的官方文档中也有介绍和对比：[Compile Time Form Processing](https://doc.qt.io/qt-6/designer-using-a-ui-file.html#compile-time-form-processing)，文档中也是推荐使用“以指针成员方式集成”。
+Qt Creator默认使用的是第一种方式，书籍内使用的是第三种方式。实际上还有第四种方式，在`gotocell1`项目中的main函数内，我们在外部直接使用相应的UI类。这四种方式在Qt的官方文档中也有介绍和对比：[Compile Time Form Processing](https://doc.qt.io/archives/qt-4.8/designer-using-a-ui-file.html#compile-time-form-processing)，文档中也是推荐使用“以指针成员方式集成”。
 
 ---
 # 本章C++学习笔记
