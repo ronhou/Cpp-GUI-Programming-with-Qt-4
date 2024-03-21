@@ -23,7 +23,7 @@
 > 官方文档介绍：[Automatic Connections](https://doc.qt.io/archives/qt-4.8/designer-using-a-ui-file.html#automatic-connections)
 
 QWidget窗体类内，可以通过`void on_<object name>_<signal name>(<signal parameters>);`格式自定义槽函数，自动建立信号-槽连接到该槽函数，它等同于我们主动通过如下方式建立信号-槽连接：  
-`QObject::connect(<object name>, SIGNAL(signal name), this, on_<object name>__<signal_name>)`
+`QObject::connect(<object name>, SIGNAL(signal name), this, on_<object name>_<signal_name>)`
 
 ### UI
 #### .ui界面文件
