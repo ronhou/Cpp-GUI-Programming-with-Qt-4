@@ -3,15 +3,15 @@
 + 只能在QObject类内定义信号和槽
 + QObject派生类需要在类定义开始处使用`Q_OBJECT`宏
 
-### 深入介绍信号和槽
-#### 建立信号-槽连接：
+## 深入介绍信号和槽
+### 建立信号-槽连接：
 `QObject::connect(sender, SIGNAL(signal), receiver, SLOT(slot))`
 + `sender`和`receiver`是指向QObject对象的指针，`signal`和`slot`是不带参数名的信号和槽函数
 + 可以通过`signals`宏自定义信号；可以通过`slots`宏自定义槽函数
 + 使用`QObject::connect`连接信号和槽函数的时候，需要使用`SIGNAL`包含信号，使用`SLOT`宏包含槽函数
   + `SIGNAL()`宏和`SLOT()`宏会将其转换成相应的字符串
 
-#### 信号与槽函数
+### 信号与槽函数
   + 一个信号可以连接多个槽
   + 多个信号可以连接同一个槽
   + 一个信号可以与另外一个信号连接
@@ -19,17 +19,29 @@
   + 要把信号成功连接到槽，它们的参数必须具有相同的顺序和类型
     + 如果信号的参数比它所连接的槽的参数多，那么多余的参数将会被简单地忽略掉
 
-#### 自动建立信号槽连接
+### 自动建立信号槽连接
 > 官方文档介绍：[Automatic Connections](https://doc.qt.io/archives/qt-4.8/designer-using-a-ui-file.html#automatic-connections)
 
 QWidget窗体类内，可以通过`void on_<object name>_<signal name>(<signal parameters>);`格式自定义槽函数，自动建立信号-槽连接到该槽函数，它等同于我们主动通过如下方式建立信号-槽连接：  
 `QObject::connect(<object name>, SIGNAL(signal name), this, on_<object name>_<signal_name>)`
 
-### UI
-#### .ui界面文件
+## UI
+### .ui界面文件
 .ui文件是一种基于XML格式的文件。
 使用Qt Creator或者Qt Designer，在.ui界面文件上，能方便，自由且直观地设计出我们想要的UI界面。
 设计时，我们可以添加各种组件，设置布局，调整tab顺序，建立UI内的信号-槽连接等。
+
+### 通过`QUiLoder`加载`.ui`文件
+在第2.5节中，简短的介绍了通过`QUiLoader`动态加载对话框，我参照其说明将上一节的排序对话框重新实现了一遍。
+需要注意的是：
++ `QUiLoader`类放在一个独立的库中；为了在Qt应用程序中使用`QUiLoader`，必须在这个应用程序的`.pro`项目文件中添加一行：`CONFIG += uitools`
+  + 我使用的Qt Creator 12警告我改成：`QT += uitools`
++ 使用`QUiLoader`加载`.ui`文件，需要在构建时将`.ui`文件拷贝到构建目录。书里没有介绍这一部分，可以在运行应用程序前手动将ui文件拷贝过去，也可以将拷贝命令写入`.pro`项目文件，详见`sort.pro`。
+  + `QMAKE_PRET_LINK`：编译前执行
+  + `QMAKE_POST_LINK`：编译后执行
++ `QUiLoader`加载ui文件和使用`ui_`类对象`setupUi`的区别
+  + `setupUi`方法是对传入的窗体参数进行设计，需外部传入窗体对象的指针
+  + `QUiLoader.load`则是直接返回一个窗体对象的指针
 
 ### ui_头文件
 通过uic工具可以把.ui界面文件转换成C++头文件，打开该头文件，我们可以看到：
