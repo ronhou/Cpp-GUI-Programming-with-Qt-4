@@ -7,7 +7,22 @@ class Spreadsheet : public QTableWidget
 {
     Q_OBJECT
 public:
-    Spreadsheet();
+    Spreadsheet(QWidget *parent = nullptr);
+
+    bool autoRecalculate() const { return autoRecalc; }
+
+private slots:
+    void cut();
+    void copy();
+    void paste();
+    void del();
+    void selectCurrentRow();
+    void selectCurrentColumn();
+    void recalculate();
+    void setAutoRecalculate(bool recalc);
+
+private:
+    bool autoRecalc;
 };
 
 #endif // SPREADSHEET_H
