@@ -8,6 +8,7 @@ class FindDialog;
 class QAction;
 class QMenu;
 class QToolBar;
+class QLabel;
 
 class MainWindow : public QMainWindow
 {
@@ -27,6 +28,8 @@ private slots:
     void sort();
     void about();
     void openRecentFile();
+    void updateStatusBar();
+    void spreadsheetModified();
 
 private:
     void createActions();
@@ -40,6 +43,8 @@ private:
 private:
     Spreadsheet *spreadsheet;
     FindDialog *findDialog;
+    QLabel *locationLabel;
+    QLabel *formulaLabel;
     QStringList recentFiles;
     QString curFile;
 

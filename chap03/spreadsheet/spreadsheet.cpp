@@ -49,3 +49,13 @@ void Spreadsheet::setAutoRecalculate(bool recalc)
     if (autoRecalc)
         recalculate();
 }
+
+QString Spreadsheet::currentLocation() const
+{
+    return QChar('A' + currentColumn()) + QString::number(currentRow() + 1);
+}
+
+QString Spreadsheet::currentFormula() const
+{
+    return "";
+}

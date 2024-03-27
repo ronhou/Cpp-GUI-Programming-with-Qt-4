@@ -5,6 +5,8 @@
 #include <QMenuBar>
 #include <QMenu>
 #include <QToolBar>
+#include <QLabel>
+#include <QStatusBar>
 
 #include "mainwindow.h"
 #include "spreadsheet.h"
@@ -146,7 +148,7 @@ void MainWindow::createActions()
     connect(aboutAction, SIGNAL(triggered(bool)), this, SLOT(about()));
 
     aboutQtAction = new QAction(tr("About &Qt"), this);
-    aboutAction->setStatusTip(tr("Show the Qt library's about box"));
+    aboutQtAction->setStatusTip(tr("Show the Qt library's about box"));
     connect(aboutQtAction, SIGNAL(triggered(bool)), qApp, SLOT(aboutQt()));
 }
 
@@ -219,7 +221,19 @@ void MainWindow::createToolBars()
 
 void MainWindow::createStatusBar()
 {
-    qDebug() << "create status bar";
+    locationLabel = new QLabel(" W999 ");
+    locationLabel->setAlignment(Qt::AlignHCenter);
+    locationLabel->setMinimumSize(locationLabel->sizeHint());
+
+    formulaLabel = new QLabel;
+    formulaLabel->setIndent(3);
+
+    statusBar()->addWidget(locationLabel);
+    statusBar()->addWidget(formulaLabel, 1);
+
+    connect(spreadsheet, SIGNAL(currentCellChanged(int,int,int,int)), this, SLOT(updateStatusBar()));
+    connect(spreadsheet, SIGNAL(modified()), this, SLOT(spreadsheetModified()));
+    updateStatusBar();
 }
 
 void MainWindow::readSettings()
@@ -277,4 +291,18 @@ void MainWindow::sort()
 void MainWindow::about()
 {
     qDebug() << "show about dialog";
+}
+
+void MainWindow::updateStatusBar()
+{
+    qDebug() << "update Status Bar";
+    locationLabel->setText(spreadsheet->currentLocation());
+    formulaLabel->setText(spreadsheet->currentFormula());
+}
+
+void MainWindow::spreadsheetModified()
+{
+    qDebug() << "on spreadsheet modified";
+    setWindowModified(true);
+    updateStatusBar();
 }

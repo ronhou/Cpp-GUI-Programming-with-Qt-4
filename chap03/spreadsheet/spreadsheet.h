@@ -10,6 +10,8 @@ public:
     Spreadsheet(QWidget *parent = nullptr);
 
     bool autoRecalculate() const { return autoRecalc; }
+    QString currentLocation() const;
+    QString currentFormula() const;
 
 private slots:
     void cut();
