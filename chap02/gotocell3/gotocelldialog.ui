@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>252</width>
+    <width>236</width>
     <height>70</height>
    </rect>
   </property>
@@ -19,7 +19,7 @@
      <item>
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>&amp;CellX XLocation:</string>
+        <string>&amp;Cell Location:</string>
        </property>
        <property name="buddy">
         <cstring>lineEdit</cstring>
