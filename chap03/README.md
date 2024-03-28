@@ -46,6 +46,25 @@
   + `QStatusBar::addWidget`等添加部件的方法可通过参数指定部件的“伸展因子”
     + *暂时不明白“伸展因子”的效果，等后续完成整个项目之后应该就能看到效果了*
 
+# 3.4 实现 File 菜单
+> 由于`Spreadsheet`中央窗口部件在下一章才会真正实现，因此目前还看不到电子表的实际效果，其中读写文件函数只能先给一个空实现，可以通过日志大致了解一下`File`菜单的实现。
+> 
+> 或者先去把[源码](https://ptgmedia.pearsoncmg.com/images/9780132354165/examples/qt-book-examples.zip)的实现拷贝过来，本节先看效果，下一章再学习相关内容。
++ `QWidget`支持设置和获取`windowModified`属性。比如我们修改了文件但未保存时，文件名后面会跟着一个星号（*）。
++ 可以通过`QMessageBox`提供的静态函数弹出`Information`，`Warning`，`Critical`和`Question`四种消息对话框。
+  + `QMessageBox`提供了许多标准按钮，可以对按钮进行组合，也可以自定义按钮。
++ 状态栏（`statusBar()`）可通过`showMessage`方法在状态栏显示一个`timeout`毫秒的消息。
++ `QFileDialog::getOpenFileName`静态函数可以弹出打开文件的对话框，让用户选择一个文件，并且返回这个文件名。
++ `QFileDialog::getSaveFileName`静态函数则可以弹出保存文件的对话框，并返回相应的文件名。
++ 当窗口关闭时，将调用`QWidget::close()`槽函数，该槽会给这个窗口部件发射一个“close”事件；我们通过重新实现`QWidget::closeEvent()`函数，就可以中途截取对这个主窗口的关闭操作。
++ `QString::arg()`函数将会使用自己的参数替换最小数字的“%n”参数，并且会用它的参数返回结果“%n”字符和最终的结果字符串（链式调用）。
+  + Qt Creator 对此作出了警告：“`Use multi-arg instead [clazy-qstring-arg]`”，于是我将其改成了多参数的形式调用`arg()`。
++ 每一个动作（`action`）都可以带一个与之相关的`QVariant`型`data`项
+  + `QVariant`类型可以保存许多C++和Qt型变量
+  + 可以通过`QVariant::toString()`等方法将其转换成相应的目标类型
++ `qobject_cast<T>()`函数可在 Qt 的 moc（meta-object compiler，元对象编译器）所生成的元信息基础上执行动态类型强制转换（dynamic cast）。它返回一个指向所需 Object 子类的指针，或者是在该对象不能被转换成所需的类型时返回空指针。
+  + 与标准的 C++ 的`dynamic_cast<T>()`不同，Qt 的 `qobject_cast<T>()` 可正确地跨越动态库边界。
+
 # 有几个疑惑的地方
   + 即使`Spreadsheet`类没有申明和定义动作连接的对应的槽函数，编译也可以通过，不会提示编译报错或警告
     + 从效果上来说，只是未连接动作对应的信号-槽

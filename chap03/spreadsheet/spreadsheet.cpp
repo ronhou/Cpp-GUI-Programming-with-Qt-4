@@ -59,3 +59,15 @@ QString Spreadsheet::currentFormula() const
 {
     return "";
 }
+
+bool Spreadsheet::readFile(const QString &fileName)
+{
+    qDebug() << "read spreadsheet file" << fileName;
+    return true;
+}
+
+bool Spreadsheet::writeFile(const QString &fileName)
+{
+    qDebug() << "write spreadsheet file" << fileName;
+    return true;
+}

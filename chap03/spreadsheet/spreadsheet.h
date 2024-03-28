@@ -12,6 +12,8 @@ public:
     bool autoRecalculate() const { return autoRecalc; }
     QString currentLocation() const;
     QString currentFormula() const;
+    bool readFile(const QString& fileName);
+    bool writeFile(const QString& fileName);
 
 private slots:
     void cut();
