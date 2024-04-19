@@ -50,6 +50,16 @@ void Spreadsheet::setAutoRecalculate(bool recalc)
         recalculate();
 }
 
+void Spreadsheet::findNext(const QString &str, Qt::CaseSensitivity cs)
+{
+    qDebug() << "find next text" << str << cs;
+}
+
+void Spreadsheet::findPrev(const QString &str, Qt::CaseSensitivity cs)
+{
+    qDebug() << "find previous text" << str << cs;
+}
+
 QString Spreadsheet::currentLocation() const
 {
     return QChar('A' + currentColumn()) + QString::number(currentRow() + 1);
@@ -70,4 +80,15 @@ bool Spreadsheet::writeFile(const QString &fileName)
 {
     qDebug() << "write spreadsheet file" << fileName;
     return true;
+}
+
+QTableWidgetSelectionRange Spreadsheet::selectedRange() const
+{
+    QList<QTableWidgetSelectionRange> ranges = selectedRanges();
+    return ranges.isEmpty() ? QTableWidgetSelectionRange() : ranges.first();
+}
+
+void Spreadsheet::sort(const SpreadsheetCompare &compare)
+{
+    qDebug() << "sort spreadsheet";
 }

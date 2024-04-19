@@ -9,12 +9,18 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    finddialog.cpp \
+    gotocelldialog.cpp \
     main.cpp \
     mainwindow.cpp \
+    sortdialog.cpp \
     spreadsheet.cpp
 
 HEADERS += \
+    finddialog.h \
+    gotocelldialog.h \
     mainwindow.h \
+    sortdialog.h \
     spreadsheet.h
 
 # Default rules for deployment.
@@ -25,4 +31,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 RESOURCES += \
     spreadsheet.qrc
 
-FORMS +=
+FORMS += \
+    gotocelldialog.ui \
+    sortdialog.ui

@@ -14,6 +14,11 @@
 
 #include "mainwindow.h"
 #include "spreadsheet.h"
+#include "finddialog.h"
+#include "gotocelldialog.h"
+#include "ui_gotocelldialog.h"
+#include "sortdialog.h"
+#include "ui_sortdialog.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -398,21 +403,59 @@ void MainWindow::openRecentFile()
 void MainWindow::find()
 {
     qDebug() << "show find dialog";
+    if (!findDialog) {
+        findDialog = new FindDialog(this);
+        connect(findDialog, SIGNAL(findNext(QString,Qt::CaseSensitivity)),
+                spreadsheet, SLOT(findNext(QString,Qt::CaseSensitivity)));
+        connect(findDialog, SIGNAL(findPrev(QString,Qt::CaseSensitivity)),
+                spreadsheet, SLOT(findPrev(QString,Qt::CaseSensitivity)));
+    }
+
+    // findDialog->setModal(true);
+    findDialog->show();
+    findDialog->raise();
+    findDialog->activateWindow();
 }
 
 void MainWindow::goToCell()
 {
     qDebug() << "show goToCell dialog";
+    GoToCellDialog dialog(this);
+    if (dialog.exec()) {
+        QString str = dialog.ui->lineEdit->text().toUpper();
+        spreadsheet->setCurrentCell(str.midRef(1).toInt() - 1, str[0].unicode() - 'A');
+    }
 }
 
 void MainWindow::sort()
 {
     qDebug() << "show sort dialog";
+    SortDialog dialog(this);
+    QTableWidgetSelectionRange range = spreadsheet->selectedRange();
+    dialog.setColumnRange('A' + range.leftColumn(), 'A' + range.rightColumn());
+    if (dialog.exec()) {
+        SpreadsheetCompare compare;
+        // 考虑到“None”项所以才减去1，后面要注意
+        compare.keys[0] = dialog.ui->primaryColumnCombo->currentIndex();
+        compare.keys[1] = dialog.ui->secondaryColumnCombo->currentIndex() - 1;
+        compare.keys[2] = dialog.ui->tertiaryColumnCombo->currentIndex() - 1;
+        compare.ascending[0] = (dialog.ui->primaryOrderCombo->currentIndex() == 0);
+        compare.ascending[1] = (dialog.ui->secondaryOrderCombo->currentIndex() == 0);
+        compare.ascending[2] = (dialog.ui->tertiaryOrderCombo->currentIndex() == 0);
+        spreadsheet->sort(compare);
+    }
 }
 
 void MainWindow::about()
 {
-    qDebug() << "show about dialog";
+    // qDebug() << "show about dialog";
+    QMessageBox::about(this, tr("About Spreadsheet"),
+                       tr("<h2>Spreadsheet 1.1</h2>"
+                          "<p>Copyright &copy; 2008 Software Inc."
+                          "<p>Spreadsheet is a small application that "
+                          "demonstrates QAction, QMainWindow, QMenuBar, "
+                          "QStatusBar, QTableWIdget, QToolBar, and many other "
+                          "Qt classes."));
 }
 
 void MainWindow::updateStatusBar()
