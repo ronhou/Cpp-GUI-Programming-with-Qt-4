@@ -73,6 +73,7 @@ private:
     QAction *openAction;
     QAction *saveAction;
     QAction *saveAsAction;
+    QAction *closeAction;
     QAction *exitAction;
     QAction *cutAction;
     QAction *copyAction;

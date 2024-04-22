@@ -39,6 +39,7 @@ MainWindow::MainWindow(QWidget *parent)
     findDialog = nullptr;
 
     setWindowIcon(QIcon(":/images/icon.png"));
+    setAttribute(Qt::WA_DeleteOnClose);
     setCurrentFile("");
 }
 
@@ -85,10 +86,15 @@ void MainWindow::createActions()
         connect(recentFileActions[i], SIGNAL(triggered(bool)), this, SLOT(openRecentFile()));
     }
 
+    closeAction = new QAction(tr("&Close"), this);
+    closeAction->setShortcut(QKeySequence::Close);
+    closeAction->setStatusTip(tr("Close this window"));
+    connect(closeAction, SIGNAL(triggered(bool)), this, SLOT(close()));
+
     exitAction = new QAction(tr("E&xit"), this);
     exitAction->setShortcut(tr("Ctrl+Q"));
     exitAction->setStatusTip(tr("Exit the application"));
-    connect(exitAction, SIGNAL(triggered(bool)), this, SLOT(close()));
+    connect(exitAction, SIGNAL(triggered(bool)), qApp, SLOT(closeAllWindows()));
 
     cutAction = new QAction(tr("Cu&t"), this);
     cutAction->setIcon(QIcon(":/images/cut.png"));
@@ -182,6 +188,7 @@ void MainWindow::createMenus()
     for (int i = 0; i < MaxRecentFiles; ++i)
         fileMenu->addAction(recentFileActions[i]);
     fileMenu->addSeparator();
+    fileMenu->addAction(closeAction);
     fileMenu->addAction(exitAction);
 
     editMenu = menuBar()->addMenu(tr("&Edit"));
@@ -376,10 +383,8 @@ QString MainWindow::strippedName(const QString &fullFileName)
 void MainWindow::newFile()
 {
     qDebug() << "create a new spreadsheet file";
-    if (okToContinue()) {
-        spreadsheet->clear();
-        setCurrentFile("");
-    }
+    MainWindow *mainWindow = new MainWindow;
+    mainWindow->show();
 }
 
 void MainWindow::open()

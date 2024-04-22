@@ -101,6 +101,15 @@ class QSettings {
   + 键（key）与文件系统的路径相似，可以使用路径形式的语法（例如：`findDialog/matchCase`）来指定子键（subkey）的值，或者也可以使用`beginGroup()`和`endGroup()`的形式。
   + 值（value）可以是`QVariant`所支持的任意类型，包括那些已经注册过的自定义类型。
 
+# 3.7 多文档
+这一节并没有详细介绍如何做好多文档，只是简单介绍了如何通过多窗口的形式实现多文档的效果。
++ `main`函数中需改为使用`new`的方式创建首个窗口
+  + **为什么要改成`new`?** 该窗口的的内存管理由谁负责，`QApplication`？
+  + **假如不修改这里的话，为什么关闭这个窗口的时候会出错？**
++ `newFile`的逻辑改成了`newMainWindow`
+  + 同上，这里创建的窗口的内存管理也是由`QApplication`负责吗？
++ 新增了`closeAction`，相应的将`exitAction`改为绑定`closeAllWinidows`槽
+
 # 有几个疑惑的地方
   + 即使`Spreadsheet`类没有申明和定义动作连接的对应的槽函数，编译也可以通过，不会提示编译报错或警告
     + 从效果上来说，只是未连接动作对应的信号-槽
