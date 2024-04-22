@@ -11,6 +11,7 @@
 #include <QFileDialog>
 #include <QCloseEvent>
 #include <QMutableStringListIterator>
+#include <QSettings>
 
 #include "mainwindow.h"
 #include "spreadsheet.h"
@@ -257,11 +258,37 @@ void MainWindow::createStatusBar()
 void MainWindow::readSettings()
 {
     qDebug() << "read settings";
+    QSettings settings("Software Inc.", "Spreadsheet");
+
+    restoreGeometry(settings.value("geometry").toByteArray());
+
+    recentFiles = settings.value("recentFiles").toStringList();
+    updateRecentFileActions();
+
+    bool showGrid = settings.value("showGrid").toBool();
+    showGridAction->setChecked(showGrid);
+
+    bool autoRecalc = settings.value("autoRecalc").toBool();
+    autoRecalcAction->setChecked(autoRecalc);
 }
 
 void MainWindow::writeSettings()
 {
     qDebug() << "write settings";
+    QSettings settings("Software Inc.", "Spreadsheet");
+    settings.setValue("geometry", saveGeometry());
+    settings.setValue("recentFiles", recentFiles);
+    settings.setValue("showGrid", showGridAction->isChecked());
+    settings.setValue("autoRecalc", autoRecalcAction->isChecked());
+
+    // caseCheckBox和backwardCheckBox是findDialog的私有成员，没法直接访问
+    // 而且我认为存储该配置的逻辑应该写在findDialog内比较好
+    /*
+    settings.beginGroup("findDialog");
+    settings.setValue("matchCase", findDialog->caseCheckBox->isChecked());
+    settings.setValue("searchBackward", findDialog->backwardCheckBox->isChecked());
+    settings.endGroup();
+    */
 }
 
 bool MainWindow::okToContinue()

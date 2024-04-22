@@ -83,6 +83,24 @@
   在上一章中有提到，书中UI类嵌入方式采用的是“多重继承”的方式，而我使用的是“以指针成员方式集成”。
   因此，当外部使用对话框的UI部件的时候，书中可以以public公有成员的方式直接使用，而我需要将UI指针成员改为public，包含相应的UI头文件，然后才能通过该UI成员使用其成员部件。
 
+# 3.6 存储设置
+这一节主要介绍了如何使用`QSettings`设置（写）和获取（读）应用级别的配置。
+```C++
+class QSettings {
+    // constructor
+    explicit QSettings(const QString &organization, const QString &application = QString(), QObject *parent = nullptr);
+
+    // 设置（写）配置
+    void setValue(const QString &key, const QVariant &value);
+    // 获取（读）配置
+    QVariant value(const QString &key, const QVariant &defaultValue = QVariant()) const;
+};
+```
++ 本节中用到的`QSettings`的构造函数如上所示，主要指定了“组织机构”和“应用程序”的名称，（Windows系统下）查看注册表可以发现，其读写位置位于`HKEY_CURRENT_USER\SOFTWARE\Software Inc.\Spreadsheet`。
++ `QSettings`把设置信息存储为键值对（`key-value pair`）的形式。
+  + 键（key）与文件系统的路径相似，可以使用路径形式的语法（例如：`findDialog/matchCase`）来指定子键（subkey）的值，或者也可以使用`beginGroup()`和`endGroup()`的形式。
+  + 值（value）可以是`QVariant`所支持的任意类型，包括那些已经注册过的自定义类型。
+
 # 有几个疑惑的地方
   + 即使`Spreadsheet`类没有申明和定义动作连接的对应的槽函数，编译也可以通过，不会提示编译报错或警告
     + 从效果上来说，只是未连接动作对应的信号-槽
