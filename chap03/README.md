@@ -84,6 +84,7 @@
   因此，当外部使用对话框的UI部件的时候，书中可以以public公有成员的方式直接使用，而我需要将UI指针成员改为public，包含相应的UI头文件，然后才能通过该UI成员使用其成员部件。
 
 # 3.6 存储设置
+## `QSettings`
 这一节主要介绍了如何使用`QSettings`设置（写）和获取（读）应用级别的配置。
 ```C++
 class QSettings {
@@ -110,6 +111,13 @@ class QSettings {
   + 同上，这里创建的窗口的内存管理也是由`QApplication`负责吗？
 + 新增了`closeAction`，相应的将`exitAction`改为绑定`closeAllWinidows`槽
 
+# 3.8 程序启动画面
+## `QSplashScreen`
++ 类`QSplashScreen`会在应用程序的主窗口出现之前显示一个图片
++ 它也可以通过`QSplashScreen::showMessage`方法在这个图片上显示一些消息
++ 程序启动画面的代码一般会放在`main()`函数中，位于`QApplication::exec()`调用之前。
+
+---
 # 有几个疑惑的地方
   + 即使`Spreadsheet`类没有申明和定义动作连接的对应的槽函数，编译也可以通过，不会提示编译报错或警告
     + 从效果上来说，只是未连接动作对应的信号-槽
