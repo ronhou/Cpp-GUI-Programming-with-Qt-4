@@ -29,3 +29,16 @@
 + 当用户在一个空单元格内输入一些文本的时候，`QTableWidget`会自动创建一个用来存储这些文本的`QTableWidgetItem`。
 + `QTableWidgetItem`不是一个窗口部件类，而是一个纯粹的数据类。
 + `text()/setText()`：获取/设置 单元格内文本
+
+## 3. 载入和保存
+这一节介绍了如何通过`QFile`和`QDataStream`打开（读）和保存（写）自定义的二进制数据格式的 Spreadsheet 文件。
++ `QFile::open`：打开文件，`QFile`构造时可传入文件路径，`open`参数传入相应的打开模式（权限），比如`ReadOnly`（只读）和`WriteOnly`（只写）等。
++ `QDataStream`：数据流，类似标准库的`std::basic_fstream`
+  + 构造`QDataStream`可传入`QIODevice*`指针，比如上面的`QFile`
+  + `QDataStream::setVersion`：设置二进制数格式的版本。*（个人理解是因为标准一直在变，所以需要指定，避免兼容问题）*
+  + 各种数据类型的二进制格式由`QDataStream`决定
+    + `quint16`按照高字节在后的顺序存储为两个字节。*（为什么我看到的是高位在前，低位在后，是我高低前后理解有误吗？）*
+    + `QString`则被存储为字符串的长度（四个字节）后跟 Unicode 字符。
++ OverrideCursor
+  + `QApplication::setOverrideCursor(Qt::WaitCursor)`：在输出数据之前，把应用程序的光标修改为标准的等待光标。
+  + `QApplication::restoreOverrideCursor()`：数据输出完毕，需要把应用程序的光标重新恢复为普通光标。

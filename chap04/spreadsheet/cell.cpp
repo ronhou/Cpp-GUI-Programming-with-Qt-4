@@ -4,7 +4,10 @@ Cell::Cell() {}
 
 QString Cell::formula() const
 {
-	return "";
+	return data(Qt::EditRole).toString();
 }
 
-void Cell::setFormula(const QString& formula) {}
+void Cell::setFormula(const QString& formula)
+{
+	setData(Qt::EditRole, formula);
+}
