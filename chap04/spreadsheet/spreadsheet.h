@@ -3,6 +3,8 @@
 
 #include <QTableWidget>
 
+class Cell;
+
 class SpreadsheetCompare
 {
 public:
@@ -20,12 +22,13 @@ public:
 	bool autoRecalculate() const { return autoRecalc; }
 	QString currentLocation() const;
 	QString currentFormula() const;
+	void clear();
 	bool readFile(const QString& fileName);
 	bool writeFile(const QString& fileName);
 	QTableWidgetSelectionRange selectedRange() const;
 	void sort(const SpreadsheetCompare& compare);
 
-private slots:
+public slots:
 	void cut();
 	void copy();
 	void paste();
@@ -37,7 +40,25 @@ private slots:
 	void findNext(const QString &str,Qt::CaseSensitivity cs);
 	void findPrev(const QString &str,Qt::CaseSensitivity cs);
 
+signals:
+	void modified();
+
+private slots:
+	void somethingChanged();
+
 private:
+	Cell* cell(int row, int column) const;
+	QString text(int row, int column) const;
+	QString formula(int row, int column) const;
+	void setFormula(int row, int column, const QString& formula);
+
+private:
+	enum {
+		MagicNumber = 0x7F51C883,
+		RowCount = 999,
+		ColumnCount = 26,
+	};
+
 	bool autoRecalc;
 };
 

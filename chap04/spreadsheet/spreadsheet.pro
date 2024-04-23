@@ -9,6 +9,7 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    cell.cpp \
     finddialog.cpp \
     gotocelldialog.cpp \
     main.cpp \
@@ -17,6 +18,7 @@ SOURCES += \
     spreadsheet.cpp
 
 HEADERS += \
+    cell.h \
     finddialog.h \
     gotocelldialog.h \
     mainwindow.h \
