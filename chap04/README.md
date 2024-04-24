@@ -42,3 +42,23 @@
 + OverrideCursor
   + `QApplication::setOverrideCursor(Qt::WaitCursor)`：在输出数据之前，把应用程序的光标修改为标准的等待光标。
   + `QApplication::restoreOverrideCursor()`：数据输出完毕，需要把应用程序的光标重新恢复为普通光标。
+
+## 4. 实现 Edit 菜单
++ copy（复制）：将选区内的文本（`text()`或者`formula()`）序列化，写入到系统剪贴板。
+  + 序列化：遍历当前选区，将每个单元格的公式追加到文本串中，行与行之间使用换行符“\n”分隔，单元格之间则以制表符“\t”来分割。
+  + 写入系统剪贴板：`QApplication::clipboard()->setText(text)`。
++ paste（粘贴）：取出剪切板的文本，将其反序列化，按照上面的规则分解后设置到选区内的每一个单元格。 
+  + 取系统剪切版的文本：`QApplication::clipboard()->text()`。
+  + 这里缺少数据校验和容错等机制，从剪贴板取出的文本并不一定符合上面的规范，可能会导致应用程序崩溃。
++ 选择模式设置为`QAbstractItemView::ContiguousSelection`时，选择范围不会超过1。
++ `findNext/findPrev`（查找）：从当前行列的位置向后/向前搜索
+  + 需略过当前单元格，需从下一个/上一个位置开始搜索，否则如果当前单元格满足条件，则会一直停留在当前单元格位置
+  + `QString::contains`：判断字符串是否包含查找串
++ `QTableWidget::selectedItems()`：获取选区内的所有item项
++ `QTableWidget::selectedRanges()`：返回选择范围（选区）列表
++ `QTableWidget:: currentRow()/currentColumn()`：返回当前所在的行列索引
++ `QTableWidget:: selectRow(int)/selectColumn(int)`：选择对应行/列
++ `QAbstractItemView::clearSelection`：取消选择（选区）
++ `QTableWidget::setCurrentCell(int,int)`：设置当前单元格
++ `QWidget::activateWindow()`：激活窗口
++ `QApplication::beep()`：让应用程序发出“哔”的一声

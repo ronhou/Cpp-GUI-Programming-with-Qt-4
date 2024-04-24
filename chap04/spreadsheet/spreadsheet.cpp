@@ -1,4 +1,5 @@
 #include <QApplication>
+#include <QClipboard>
 #include <QDataStream>
 #include <QDebug>
 #include <QFile>
@@ -26,31 +27,80 @@ Spreadsheet::Spreadsheet(QWidget *parent)
 void Spreadsheet::cut()
 {
 	qDebug() << "cut in spreadsheet";
+	copy();
+	del();
 }
 
 void Spreadsheet::copy()
 {
 	qDebug() << "copy in spreadsheet";
+	QTableWidgetSelectionRange range = selectedRange();
+	QString text;
+	for (int i = 0; i < range.rowCount(); ++i) {
+		if (i > 0)
+			text += "\n";
+		for (int j = 0; j < range.columnCount(); ++j) {
+			if (j > 0)
+				text += "\t";
+			text += formula(range.topRow() + i, range.leftColumn() + j);
+		}
+	}
+	QApplication::clipboard()->setText(text);
 }
 
 void Spreadsheet::paste()
 {
 	qDebug() << "paste in spreadsheet";
+	QTableWidgetSelectionRange range = selectedRange();
+	QString text = QApplication::clipboard()->text();
+	QStringList rows = text.trimmed().split('\n');
+	int numRows = rows.size();
+	int numColumns = rows.first().count('\t') + 1;
+
+	if (range.rowCount() * range.columnCount() != 1
+		&& (range.rowCount() != numRows || range.columnCount() != numColumns)) {
+		QMessageBox::information(
+			this,
+			tr("Spreadsheet"),
+			tr("The information cannot be pasted because the copy and paste "
+			   "areas aren't the same size."));
+		return;
+	}
+
+	for (int i = 0; i < numRows; ++i) {
+		QStringList cells = rows[i].split('\t');
+		for (int j = 0; j < numColumns; ++j) {
+			int row = range.topRow() + i;
+			int column = range.leftColumn() + j;
+			if (row < rowCount() && column < columnCount())
+				setFormula(range.topRow() + i, range.leftColumn() + j, cells[j]);
+		}
+	}
+	somethingChanged();
 }
 
 void Spreadsheet::del()
 {
 	qDebug() << "delete in spreadsheet";
+	QList<QTableWidgetItem*> items = selectedItems();
+	if (!items.empty()) {
+		foreach (QTableWidgetItem* item, items) {
+			delete item;
+		}
+		somethingChanged();
+	}
 }
 
 void Spreadsheet::selectCurrentRow()
 {
 	qDebug() << "select current row";
+	selectRow(currentRow());
 }
 
 void Spreadsheet::selectCurrentColumn()
 {
 	qDebug() << "select current column";
+	selectColumn(currentColumn());
 }
 
 void Spreadsheet::recalculate()
@@ -68,11 +118,43 @@ void Spreadsheet::setAutoRecalculate(bool recalc)
 void Spreadsheet::findNext(const QString &str, Qt::CaseSensitivity cs)
 {
 	qDebug() << "find next text" << str << cs;
+	int row = currentRow();
+	int column = currentColumn() + 1;
+	while (row < rowCount()) {
+		while (column < columnCount()) {
+			if (text(row, column).contains(str, cs)) {
+				clearSelection();
+				setCurrentCell(row, column);
+				activateWindow();
+				return;
+			}
+			++column;
+		}
+		++row;
+		column = 0;
+	}
+	QApplication::beep();
 }
 
 void Spreadsheet::findPrev(const QString &str, Qt::CaseSensitivity cs)
 {
 	qDebug() << "find previous text" << str << cs;
+	int row = currentRow();
+	int column = currentColumn() - 1;
+	while (row >= 0) {
+		while (column >= 0) {
+			if (text(row, column).contains(str, cs)) {
+				clearSelection();
+				setCurrentCell(row, column);
+				activateWindow();
+				return;
+			}
+			--column;
+		}
+		--row;
+		column = columnCount() - 1;
+	}
+	QApplication::beep();
 }
 
 void Spreadsheet::somethingChanged()
