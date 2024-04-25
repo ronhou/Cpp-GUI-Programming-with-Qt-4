@@ -67,3 +67,14 @@
 + `viewport()->update()`：视口更新
 + 仿函数（functor）：STL六大部件之一，它是一种重载了函数调用运算符（`operator()`）的类对象，它可以像函数一样被调用。
 + `qStableSort()`和`qSort()`的区别在于：当比较的两者相等时，`qStableSort()`能保持两者的原有顺序。
+
+## 6. 子类化 QTableWidgetItem
++ 在`const`方法中可以修改`mutable`关键字修饰的成员变量
+  + 因为`Cell::data() const`方法是重写自基类，且在其实现逻辑中需要修改到这两个成员变量，因此使用`mutable`修饰了这两个成员变量。
++ 表达式求值（`evalExpression`）
+  + 递归渐降解析器（recursive-descent parser）
+  + 在表达式求值之前，在字符串的末尾添加`QChar::Null`字符，调试的时候可以发现，这个字符可以起到“**哨兵**”的作用
+  + `evalExpression`：该函数处理 double 类型数据的加减法，将表达式拆解成：`term1+term2+...`的形式。
+  + `evalTerm`：同上，该函数处理 double类型的乘除法，将表达式解析成`factor1*factor2*...`的形式，代码风格也可以进行类似的改进。
+    + 和`evalExpression`流程上相似，可以尝试将其合并成一个
+  + `evalFactor`：解析因子
