@@ -10,6 +10,10 @@ public:
 
 	QString formula() const;
 	void setFormula(const QString& formula);
+	void setDirty();
+
+private:
+	bool cacheIsDirty;
 };
 
 #endif // CELL_H

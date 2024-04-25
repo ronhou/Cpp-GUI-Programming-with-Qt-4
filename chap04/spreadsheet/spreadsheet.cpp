@@ -8,7 +8,25 @@
 #include "cell.h"
 #include "spreadsheet.h"
 
-Spreadsheet::Spreadsheet(QWidget *parent)
+bool SpreadsheetCompare::operator()(const QStringList& row1,
+									const QStringList& row2) const
+{
+	for (int i = 0; i < KeyCount; ++i) {
+		int column = keys[i];
+		if (column != -1) {
+			if (row1[column] != row2[column]) {
+				if (ascending[i]) {
+					return row1[column] < row2[column];
+				} else {
+					return row1[column] > row2[column];
+				}
+			}
+		}
+	}
+	return false;
+}
+
+Spreadsheet::Spreadsheet(QWidget* parent)
 	: QTableWidget(parent)
 {
 	autoRecalc = true;
@@ -106,6 +124,14 @@ void Spreadsheet::selectCurrentColumn()
 void Spreadsheet::recalculate()
 {
 	qDebug() << "do recalculate";
+	for (int i = 0; i < rowCount(); ++i) {
+		for (int j = 0; j < columnCount(); ++j) {
+			Cell* c = cell(i, j);
+			if (c)
+				c->setDirty();
+		}
+	}
+	viewport()->update();
 }
 
 void Spreadsheet::setAutoRecalculate(bool recalc)
@@ -115,7 +141,7 @@ void Spreadsheet::setAutoRecalculate(bool recalc)
 		recalculate();
 }
 
-void Spreadsheet::findNext(const QString &str, Qt::CaseSensitivity cs)
+void Spreadsheet::findNext(const QString& str, Qt::CaseSensitivity cs)
 {
 	qDebug() << "find next text" << str << cs;
 	int row = currentRow();
@@ -136,7 +162,7 @@ void Spreadsheet::findNext(const QString &str, Qt::CaseSensitivity cs)
 	QApplication::beep();
 }
 
-void Spreadsheet::findPrev(const QString &str, Qt::CaseSensitivity cs)
+void Spreadsheet::findPrev(const QString& str, Qt::CaseSensitivity cs)
 {
 	qDebug() << "find previous text" << str << cs;
 	int row = currentRow();
@@ -268,9 +294,30 @@ QTableWidgetSelectionRange Spreadsheet::selectedRange() const
 	return ranges.isEmpty() ? QTableWidgetSelectionRange() : ranges.first();
 }
 
-void Spreadsheet::sort(const SpreadsheetCompare &compare)
+void Spreadsheet::sort(const SpreadsheetCompare& compare)
 {
 	qDebug() << "sort spreadsheet";
+	QTableWidgetSelectionRange range = selectedRange();
+
+	QList<QStringList> rows;
+	for (int i = 0; i < range.rowCount(); ++i) {
+		QStringList row;
+		for (int j = 0; j < columnCount(); ++j) {
+			row.append(formula(range.topRow() + i, range.leftColumn() + j));
+		}
+		rows.append(row);
+	}
+
+	qStableSort(rows.begin(), rows.end(), compare);
+
+	for (int i = 0; i < range.rowCount(); ++i) {
+		for (int j = 0; j < range.columnCount(); ++j) {
+			setFormula(range.topRow() + i, range.leftColumn() + j, rows[i][j]);
+		}
+	}
+
+	clearSelection();
+	somethingChanged();
 }
 
 Cell* Spreadsheet::cell(int row, int column) const

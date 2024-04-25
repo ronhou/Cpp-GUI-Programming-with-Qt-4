@@ -62,3 +62,8 @@
 + `QTableWidget::setCurrentCell(int,int)`：设置当前单元格
 + `QWidget::activateWindow()`：激活窗口
 + `QApplication::beep()`：让应用程序发出“哔”的一声
+
+## 5. 实现其它菜单
++ `viewport()->update()`：视口更新
++ 仿函数（functor）：STL六大部件之一，它是一种重载了函数调用运算符（`operator()`）的类对象，它可以像函数一样被调用。
++ `qStableSort()`和`qSort()`的区别在于：当比较的两者相等时，`qStableSort()`能保持两者的原有顺序。

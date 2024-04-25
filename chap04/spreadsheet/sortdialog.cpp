@@ -26,13 +26,13 @@ void SortDialog::setColumnRange(QChar first, QChar last)
 	ui->secondaryColumnCombo->clear();
 	ui->tertiaryColumnCombo->clear();
 
-	ui->primaryColumnCombo->addItem(tr("None"));
+	// 至少需要一个主键
+	// ui->primaryColumnCombo->addItem(tr("None"));
 	ui->secondaryColumnCombo->addItem(tr("None"));
 	ui->tertiaryColumnCombo->addItem(tr("None"));
 	// 主键组合框没有None默认选项时，宽度会偏窄。
 	// 为了避免这种不一致性，需要把主键组合框的最小大小设置成第二键组合框的理想大小。
-	// ui->primaryColumnCombo->setMinimumSize(
-	// 		 ui->secondaryColumnCombo->sizeHint());
+	ui->primaryColumnCombo->setMinimumSize(ui->secondaryColumnCombo->sizeHint());
 
 	for (QChar ch = first; ch <= last; ch = ch.unicode() + 1)
 	{

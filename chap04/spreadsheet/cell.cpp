@@ -11,3 +11,8 @@ void Cell::setFormula(const QString& formula)
 {
 	setData(Qt::EditRole, formula);
 }
+
+void Cell::setDirty()
+{
+	cacheIsDirty = true;
+}
