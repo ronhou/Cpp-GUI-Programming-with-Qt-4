@@ -1,0 +1,4 @@
+# Qt Creator 生成的项目的用户配置文件
+*.pro.user
+# Qt Creator 的项目的构建目录
+build-*-Desktop_Qt_5_14_2_MinGW_64_bit-*/

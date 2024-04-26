@@ -78,3 +78,7 @@
   + `evalTerm`：同上，该函数处理 double类型的乘除法，将表达式解析成`factor1*factor2*...`的形式，代码风格也可以进行类似的改进。
     + 和`evalExpression`流程上相似，可以尝试将其合并成一个
   + `evalFactor`：解析因子
+
+## 写在后面的话
+> `Spreadsheet`的功能的源码之间存在一些依赖，比如`MainWindow`部分功能依赖`Spreadsheet`，`Spreadsheet`的部分功能又依赖`Cell`，而这两章的内容又是按照 `MainWindow --> Spreadsheet --> Cell` 的顺序来教导的，导致我们跟着他这个顺序来编码的时候，会有某些功能无法及时体验，只能学习到后面的章节内容的时候，再来回头体验和调试。
+后面的章节我或许应该换一种方式来学习。
