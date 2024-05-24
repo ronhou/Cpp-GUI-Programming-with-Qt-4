@@ -215,6 +215,21 @@ void Plotter::updateRubberBandRegion()
 	update(rect.right(), rect.top(), 1, rect.height());
 }
 
+class PainterScope
+{
+public:
+	PainterScope(QPainter* _painter)
+		: painter(_painter)
+	{
+		painter->save();
+	}
+
+	~PainterScope() { painter->restore(); }
+
+private:
+	QPainter* painter;
+};
+
 void Plotter::refreshPixmap()
 {
 	pixmap = QPixmap(size());
@@ -282,6 +297,9 @@ void Plotter::drawCurves(QPainter* painter)
 		{Qt::red, Qt::green, Qt::blue, Qt::cyan, Qt::magenta, Qt::yellow};
 	PlotSettings settings = zoomStack[curZoom];
 	painter->setClipRect(rect.adjusted(1, 1, -1, -1));
+
+	PainterScope scope(painter);
+	painter->setRenderHint(QPainter::Antialiasing, true);
 
 	QMapIterator<int, QVector<QPointF>> i(curveMap);
 	while (i.hasNext()) {
