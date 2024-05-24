@@ -233,7 +233,7 @@ private:
 void Plotter::refreshPixmap()
 {
 	pixmap = QPixmap(size());
-	pixmap.fill(this, 0, 0);
+	pixmap.fill(Qt::gray);
 
 	QPainter painter(&pixmap);
 	painter.begin(this);
