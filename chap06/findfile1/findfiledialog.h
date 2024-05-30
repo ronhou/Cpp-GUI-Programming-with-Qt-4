@@ -18,6 +18,9 @@ public:
 	~FindFileDialog();
 
 private:
+	void setWidgetsGeometry();
+
+private:
 	QLabel* namedLabel;
 	QLabel* lookInLabel;
 	QLineEdit* namedLineEdit;

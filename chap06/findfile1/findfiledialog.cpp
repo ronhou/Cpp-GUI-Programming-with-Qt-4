@@ -23,7 +23,7 @@ FindFileDialog::FindFileDialog(QWidget* parent)
 	labels << tr("Name") << tr("In Folder") << tr("Size") << tr("Modified");
 
 	tableWidget = new QTableWidget(this);
-	tableWidget->setColumnCount(4);
+	tableWidget->setColumnCount(labels.count());
 	tableWidget->setHorizontalHeaderLabels(labels);
 
 	messageLabel = new QLabel(tr("0 files found"), this);
@@ -37,20 +37,87 @@ FindFileDialog::FindFileDialog(QWidget* parent)
 
 	connect(closeButton, SIGNAL(clicked(bool)), this, SLOT(close()));
 
-	namedLabel->setGeometry(9, 9, 50, 25);
-	namedLineEdit->setGeometry(65, 9, 200, 25);
-	lookInLabel->setGeometry(9, 40, 50, 25);
-	lookInLineEdit->setGeometry(65, 40, 200, 25);
-	subfoldersCheckBox->setGeometry(9, 71, 256, 25);
-	tableWidget->setGeometry(9, 100, 256, 100);
-	messageLabel->setGeometry(9, 206, 256, 25);
-	findButton->setGeometry(271, 9, 85, 32);
-	stopButton->setGeometry(271, 47, 85, 32);
-	closeButton->setGeometry(271, 84, 85, 32);
-	helpButton->setGeometry(271, 199, 85, 32);
-
+	setWidgetsGeometry();
 	setWindowTitle(tr("Find Files or Folders"));
-	setFixedSize(365, 240);
 }
 
 FindFileDialog::~FindFileDialog() {}
+
+// 由于历史原因，
+// QRect::right() 返回的是 QRect::left() + QRect::width() - 1
+// QRectF 就没有这个问题
+int getQRectRight(const QRect& rect)
+{
+	return rect.left() + rect.width();
+}
+
+// 由于历史原因，
+// QRect::bottom() 返回的是 QRect::top() + QRect::height() -1
+// QRectF 就没有这个问题
+int getQRectBottom(const QRect& rect)
+{
+	return rect.top() + rect.height();
+}
+
+void FindFileDialog::setWidgetsGeometry()
+{
+	const int horiMargin = 9, vertMargin = 9;
+	const int labelLeft = horiMargin, labelTop = vertMargin;
+	const int labelWidth = 50, labelHeight = 25;
+	namedLabel->setGeometry(labelLeft, labelTop, labelWidth, labelHeight);
+
+	const int horiPadding = 6, vertPadding = 6, lineEditWidth = 200;
+	namedLineEdit->setGeometry(getQRectRight(namedLabel->geometry()) + horiPadding,
+							   namedLabel->geometry().top(),
+							   lineEditWidth,
+							   namedLabel->geometry().height());
+	lookInLabel->setGeometry(namedLabel->geometry().left(),
+							 getQRectBottom(namedLabel->geometry()) + vertPadding,
+							 labelWidth,
+							 labelHeight);
+	lookInLineEdit->setGeometry(getQRectRight(lookInLabel->geometry()) + horiPadding,
+								lookInLabel->geometry().top(),
+								lineEditWidth,
+								lookInLabel->geometry().height());
+
+	const int leftWidgetWidth = labelWidth + lineEditWidth + horiPadding;
+	subfoldersCheckBox->setGeometry(namedLabel->geometry().left(),
+									getQRectBottom(lookInLabel->geometry()) + vertPadding,
+									leftWidgetWidth,
+									labelHeight);
+
+	const int tableWidgetHeight = 100;
+	tableWidget->setGeometry(namedLabel->geometry().left(),
+							 getQRectBottom(subfoldersCheckBox->geometry()) + vertPadding,
+							 leftWidgetWidth,
+							 tableWidgetHeight);
+	messageLabel->setGeometry(namedLabel->geometry().left(),
+							  getQRectBottom(tableWidget->geometry()) + vertPadding,
+							  leftWidgetWidth,
+							  labelHeight);
+
+	const int buttonLeft = horiMargin + leftWidgetWidth + horiPadding;
+	const int buttonWidth = 85, buttonHieght = 32;
+	findButton->setGeometry(buttonLeft,
+							namedLabel->geometry().top(),
+							buttonWidth,
+							buttonHieght);
+	stopButton->setGeometry(buttonLeft,
+							getQRectBottom(findButton->geometry()) + vertPadding,
+							buttonWidth,
+							buttonHieght);
+	closeButton->setGeometry(buttonLeft,
+							 getQRectBottom(stopButton->geometry()) + vertPadding,
+							 buttonWidth,
+							 buttonHieght);
+
+	const int dialogHeight = getQRectBottom(messageLabel->geometry())
+							 + vertMargin;
+	helpButton->setGeometry(buttonLeft,
+							dialogHeight - vertMargin - buttonHieght,
+							buttonWidth,
+							buttonHieght);
+
+	const int dialogWidth = horiMargin + leftWidgetWidth + horiPadding + buttonWidth + horiMargin;
+	setFixedSize(dialogWidth, dialogHeight);
+}
