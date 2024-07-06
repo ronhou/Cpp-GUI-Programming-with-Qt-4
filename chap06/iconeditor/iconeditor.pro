@@ -10,10 +10,12 @@ CONFIG += c++17
 
 SOURCES += \
     main.cpp \
-    iconeditor.cpp
+    iconeditor.cpp \
+    mainwindow.cpp
 
 HEADERS += \
-    iconeditor.h
+    iconeditor.h \
+    mainwindow.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -22,3 +24,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
 	iconeditor.qrc
+
+FORMS +=
