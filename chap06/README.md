@@ -57,3 +57,19 @@ QSplitter 与布局管理器的不同：
 + 书中描述“邮件列表”时使用的是`QTableWidget`，但是我发现每封邮件都是以一行为项，并不是以单元格为项；于是我便参考源码改用`QTreeWidget`作为邮件列表。
 + 设置 HTML 格式文本时，像左右尖括号这类特殊字符需要进行转义，可直接使用`QString::toHtmlEscaped()`方法。
 
+### 多文档界面
+多文档界面的实现，主要是将主窗口`QMainWindow`的中央部件设置为`QMdiArea`，然后通过`QMdiArea`的`addSubWindow()`方法添加子窗口。在本节的示例中，主窗口主要负责添加设置菜单栏和工具栏等，使用了`QTextEdit`作为子窗口部件。
+
+其它：
++ Qt 通过静态成员函数支持的对话框
+  + 消息弹窗（警告）：`QMessageBox::warning()`
+  + 打开（选择）文件对话框：`QFileDialog::getOpenFileName()`
+  + 保存文件对话框：`QFileDialog::getSaveFileName()`
++ 文件操作：`QFile`
+  + 打开文件：`QFile::open(OpenMode flags)`
++ 文本流：`QTextStream`
+  + 读全部内容：`QTextStream::readAll()`
+  + 向流写入内容：`QTextStream::operator<<()`。比如：
+    + 先：`QTextStream out(&file);`
+    + 然后：`out << "Hello World!";`
+
