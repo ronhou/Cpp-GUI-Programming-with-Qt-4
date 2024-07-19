@@ -9,9 +9,50 @@
   + 事件：而在实现窗口部件时，比如我们需要编写自己的自定义窗口部件，或者是当我们希望改变已经存在的 Qt 窗口部件的行为时，事件则是十分有用的。
 
 ## 7.1 重新实现事件处理器
++ 实现键绑定的一种更为高级的方法是使用 QAction，为其设置相应的快捷键，并将其通过信号槽绑定到对应窗口部件的槽函数中。
+
 一些成员函数：
 + `QKeyEvent::modifiers()`：可以检测出 Ctrl、Shift 和 Alt 这些修饰键：`event->modifiers() & Qt::ControlModifier`。
 + `QWidget::update()`：强制执行一个重绘操作。
 + `QWidget::updateGeometry()`：通知窗口部件负责的任意布局管理器，提示该窗口部件的大小发生了变化。
 + `QWidget::fontMetrics()`：返回一个 QFontMetrics 对象，该对象包含了当前窗口部件的字体相关的信息。
 + `QObject::timerEvent()`：可以通过 timerId 时别对应的定时器。
+
+## 7.2 安装事件过滤器
+Qt 事件模型一个非常强大的功能是：QObject 实例在看到它自己的事件之前，可以通过设置另外一个 QObejct 实例先监视这些事件。这种方法可以通过使用**事件过滤器**来实现。
+
+创建一个事件过滤器包括如下两步过程：
+1. **通过对目标对象调用`installEventFilter()`来注册监视对象。**
+   + `watchedObject->installEventFilter(monitorObject);`
+     + `watchedObject`：被监视的 QObject 实例对象，一般是子窗口部件。
+     + `monitorObject`：监视对象， 一般是父窗口部件，
+2. **在监视对象的`eventFilter()`函数中处理目标对象的事件。**
+   + `bool eventFilter(QObject *watched, QEvent *event);`
+
+Qt 提供了5个级别的事件处理和事件过滤方法：
+（个人理解：5种方法，层层向外递进）
+1. **重新实现特殊的事件处理器**  
+   重新实现像 `mousePressEvent()`、`keyPressEvent()`和`paintEvent()`这样的事件处理器，也是目前最常用的事件处理方式。
+2. **重新实现`QObject::event()`**  
+   通过`event()`函数的重新实现，可以在这些事件到达特定的事件处理器之前处理它们。这种方式常用于覆盖 Tab 键的默认意义。这种方式也可以用于处理那些没有特定事件处理器的不常见类型的事件（例如，`QEvent::HoverEnter`）。当重新实现`event()`时，必须对那些没有明确处理的情况调用其基类的`event()`函数。
+3. **在 QObject 中安装事件过滤器**  
+   对象一旦使用`intallEventFilter()`注册过，用于目标对象的所有事件都会首先发送给这个监视对象的`eventFilter()`函数。如果在同一个对象上安装（注册）了多个事件处理器，那么就会按照安装顺序**逆序**，从最近安装的到最先安装的，依次激活这些事件处理器。
+4. **在 QApplication 对象中安装事件过滤器**  
+   一旦在 qApp（唯一的 QApplication 对象）中注册了事件过滤器，那么应用程序中每个对象的每个事件都会在发送到其他事件过滤器之前，先发送给这个 `eventFilter()` 函数。这种处理方式对于调试是非常有用的。它也可以用来处理那些发送给失效窗口部件的鼠标事件，因为 QApplication 通常都会忽略这些事件。
+5. **子类化 QApplication 并且重新实现 `notify()`**  
+   Qt 调用`QApplication::notify()`来发送一个事件。重新实现这个函数是在事件过滤器得到所有事件之前获得它们的唯一方式。事件过滤器通常更有用，因为可以同时有多个事件过滤器，而`notify()`函数只能有一个。
+
+***事件传递：由内向外，由子向父***
+
+## 7.3 处理密集时的响应保持
+解决方法：
+   + 多线程
+   + 频繁调用`QApplication::processEvents()`
+     + 存在一个潜在的问题：可能关闭了主窗口，或者重复触发保存
+       + 解决方式：忽略鼠标事件喝和键盘事件：`qApp->processEvents(QEventLoop::ExcludeUserInputEvents);`
+
+进度对话框：`QProgressDialog`
+
+事件
++ 事件循环
++ 事件队列
